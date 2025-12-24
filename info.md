@@ -6,6 +6,8 @@ Biar workshop hari Sabtu nanti bisa jalan lancar tanpa hambatan, pastiin teman-t
 Jadi pas workshop kita bisa langsung praktik bareng tanpa ribet 🔥
 
 🛠 Tools yang Perlu Dipersiapkan
+
+
 1️⃣ Node.js + pnpm
 
 Digunakan untuk menjalankan aplikasi Next.js
