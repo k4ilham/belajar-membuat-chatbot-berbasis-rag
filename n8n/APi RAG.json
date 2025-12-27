@@ -1,0 +1,242 @@
+{
+  "name": "APi RAG",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "55aa27ea-b3c1-4b24-92a4-d375fdcb6f72",
+        "responseMode": "lastNode",
+        "responseData": "allEntries",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1200,
+        -160
+      ],
+      "id": "7c9b2706-b7c1-405a-815c-7f9bffdcfeff",
+      "name": "Webhook",
+      "webhookId": "55aa27ea-b3c1-4b24-92a4-d375fdcb6f72"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.module }}",
+                    "rightValue": "document",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "ab9bea3e-4b00-48ca-981f-0bc8a7839dd3"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "document"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -992,
+        -160
+      ],
+      "id": "d124357f-f492-48a5-b61d-5a6221273e56",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.method }}",
+                    "rightValue": "list",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "e64d2547-e82f-4aea-9094-bc2c8763f50f"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "list"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f5ad33eb-86c1-485f-b000-913c1b21214d",
+                    "leftValue": "={{ $json.body.method }}",
+                    "rightValue": "deleteAll",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "deleteAll"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -784,
+        -160
+      ],
+      "id": "6f18eafa-bc39-422c-a2bb-a41ee0112197",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 384,
+        "width": 960,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1264,
+        -288
+      ],
+      "id": "ae7ba7f3-7c97-4455-a7ad-8aabaa318f92",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select id, content from documents d order by id desc;\n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -512,
+        -256
+      ],
+      "id": "e97a3826-9a6b-4163-9b55-3e0b846da3fa",
+      "name": "list",
+      "credentials": {
+        "postgres": {
+          "id": "JY9hPT9io1G9upDf",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "DELETE FROM documents\nWHERE content IS NOT NULL;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -512,
+        -64
+      ],
+      "id": "ca523a25-4f30-4c1e-8e0b-42172769dd5a",
+      "name": "deleteAll",
+      "credentials": {
+        "postgres": {
+          "id": "JY9hPT9io1G9upDf",
+          "name": "Postgres account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "list",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "deleteAll",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8cd00fd2-4a6f-4c3b-84b2-76c58918067a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dfd7981dba010e448896c847639c7c03d2af91d0905ddc4815d9e2723ec19f35"
+  },
+  "id": "vKgHxoS9BPNK4LSr",
+  "tags": []
+}
